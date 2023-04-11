@@ -1,6 +1,6 @@
-# Your name: 
-# Your student id:
-# Your email:
+# Your name: Lucas Szentgyorgyi
+# Your student id: 85320192
+# Your email: szentgl@umich.edu
 # List who you have worked with on this homework:
 
 import matplotlib.pyplot as plt
@@ -15,7 +15,29 @@ def load_rest_data(db):
     and each inner key is a dictionary, where the key:value pairs should be the category, 
     building, and rating for the restaurant.
     """
-    pass
+    dir = os.path.dirname(__file__) + os.sep
+    conn = sqlite3.connect(dir + db)
+    cur = conn.cursor()
+    cat_dict = {}
+    cur.execute('SELECT * FROM categories')
+    for row in cur:
+        cat_dict[row[0]] = row[1]
+
+    build_dict = {}
+    cur.execute('SELECT * FROM buildings')
+    for row in cur:
+        build_dict[row[0]] = row[1]
+
+    cur.execute('SELECT * FROM restaurants')
+    temp_dict = {}
+    for row in cur:
+        temp_dict[row[1]] = {}
+        temp_dict[row[1]]['category'] = cat_dict[row[2]]
+        temp_dict[row[1]]['building'] = build_dict[row[3]]
+        temp_dict[row[1]]['rating'] = row[4]
+    return temp_dict
+        
+# load_rest_data('South_U_Restaurants.db')
 
 def plot_rest_categories(db):
     """
@@ -23,7 +45,28 @@ def plot_rest_categories(db):
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the count of number of restaurants in each category.
     """
-    pass
+    dir = os.path.dirname(__file__) + os.sep
+    conn = sqlite3.connect(dir + db)
+    cur = conn.cursor()
+    cat_dict = {}
+    cur.execute('SELECT * FROM categories')
+    for row in cur:
+        cat_dict[row[0]] = row[1]
+    
+    temp_dict = {}
+    cur.execute('SELECT * FROM restaurants')
+    for row in cur:
+        if cat_dict[row[2]] not in temp_dict:
+            temp_dict[cat_dict[row[2]]] = 1
+        else:
+            temp_dict[cat_dict[row[2]]] += 1
+
+    plt.bar(temp_dict.keys(), temp_dict.values())
+    plt.show()
+
+    return temp_dict
+
+# plot_rest_categories('South_U_Restaurants.db')
 
 def find_rest_in_building(building_num, db):
     '''
