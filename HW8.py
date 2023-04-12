@@ -109,7 +109,67 @@ def get_highest_rating(db): #Do this through DB as well
     The second bar chart displays the buildings along the y-axis and their ratings along the x-axis 
     in descending order (by rating).
     """
-    pass
+    dir = os.path.dirname(__file__) + os.sep
+    conn = sqlite3.connect(dir + db)
+    cur = conn.cursor()
+    ## Restaraunts 
+    cat_dict = {}
+    cur.execute('SELECT * FROM categories')
+    for row in cur:
+        cat_dict[row[0]] = row[1]
+
+    temp_dict = {}
+    cur.execute('SELECT * FROM restaurants')
+    for row in cur:
+        if cat_dict[row[2]] not in temp_dict:
+            temp_dict[cat_dict[row[2]]] = [row[-1]]
+        else:
+            temp_dict[cat_dict[row[2]]].append(row[-1])
+    
+    for a in temp_dict:
+        temp_dict[a] = sum(temp_dict[a])/len(temp_dict[a])
+    
+    temp_lst = []
+    for a in temp_dict:
+        temp_lst.append((a,temp_dict[a]))
+    final_lst = sorted(temp_lst, key = lambda x:x[1], reverse = True)
+    highest_rest = (final_lst[0])
+
+    ## Buildings
+    cat_dict = {}
+    cur.execute('SELECT * FROM buildings')
+    for row in cur:
+        cat_dict[row[0]] = row[1]
+
+    temp_dict = {}
+    cur.execute('SELECT * FROM restaurants')
+    for row in cur:
+        if cat_dict[row[3]] not in temp_dict:
+            temp_dict[cat_dict[row[3]]] = [row[-1]]
+        else:
+            temp_dict[cat_dict[row[3]]].append(row[-1])
+    
+    # print(temp_dict)
+    
+    for a in temp_dict:
+        temp_dict[a] = sum(temp_dict[a])/len(temp_dict[a])
+    
+    temp_lst = []
+    for a in temp_dict:
+        temp_lst.append((a,temp_dict[a]))
+    final_lst = sorted(temp_lst, key = lambda x:x[1], reverse = True)
+    highest_build = (final_lst[0])
+
+    return_lst = [highest_rest, highest_build]
+    return return_lst
+
+    
+
+    
+
+
+# get_highest_rating('South_U_Restaurants.db')
+
 
 #Try calling your functions here
 def main():
