@@ -112,6 +112,7 @@ def get_highest_rating(db): #Do this through DB as well
     dir = os.path.dirname(__file__) + os.sep
     conn = sqlite3.connect(dir + db)
     cur = conn.cursor()
+
     ## Restaraunts 
     cat_dict = {}
     cur.execute('SELECT * FROM categories')
@@ -135,11 +136,18 @@ def get_highest_rating(db): #Do this through DB as well
     final_lst = sorted(temp_lst, key = lambda x:x[1], reverse = True)
     highest_rest = (final_lst[0])
 
+    temp_dict = sorted(temp_dict.items(), key = lambda x:x[1])
+    temp_dict = dict(temp_dict)
+
+
+    plt.barh(list(temp_dict.keys()), list(temp_dict.values()))
+    plt.show()
+
     ## Buildings
     cat_dict = {}
     cur.execute('SELECT * FROM buildings')
     for row in cur:
-        cat_dict[row[0]] = row[1]
+        cat_dict[row[0]] = str(row[1])
 
     temp_dict = {}
     cur.execute('SELECT * FROM restaurants')
@@ -149,7 +157,6 @@ def get_highest_rating(db): #Do this through DB as well
         else:
             temp_dict[cat_dict[row[3]]].append(row[-1])
     
-    # print(temp_dict)
     
     for a in temp_dict:
         temp_dict[a] = sum(temp_dict[a])/len(temp_dict[a])
@@ -160,12 +167,16 @@ def get_highest_rating(db): #Do this through DB as well
     final_lst = sorted(temp_lst, key = lambda x:x[1], reverse = True)
     highest_build = (final_lst[0])
 
+    temp_dict = sorted(temp_dict.items(), key = lambda x:x[1])
+    temp_dict = dict(temp_dict)
+
+
+    plt.barh(list(temp_dict.keys()), list(temp_dict.values()))
+    plt.show()
+
+
     return_lst = [highest_rest, highest_build]
     return return_lst
-
-    
-
-    
 
 
 # get_highest_rating('South_U_Restaurants.db')
